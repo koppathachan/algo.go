@@ -2,38 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/sasidakh/algo.go/memoize"
-	"time"
+	"github.com/sasidakh/algo.go/util"
 )
 
-func Fibonacci(n int) int {
-	if n < 2 {
-		return n
-	}
-	return Fibonacci(n-1) + Fibonacci(n-2)
-}
-
 func main() {
-	start := time.Now()
-	res := Fibonacci(40)
-	elapsed := time.Since(start)
+	var list = util.IntArray{1, 2, 3, 4, 5, 6, 7}
+	var fn = func(a int) int {
+		return a + a
+	}
 
-	cache := make(map[int]int)
-
-	start2 := time.Now()
-	res2 := memoize.Fibonacci(40, cache)
-	elapsed2 := time.Since(start2)
-
-	start3 := time.Now()
-	res3 := memoize.Fibonacci(40, cache)
-	elapsed3 := time.Since(start3)
-
-	fmt.Println("Time : ", elapsed)
-	fmt.Println("Result: ", res)
-
-	fmt.Println("Time : ", elapsed2)
-	fmt.Println("Result: ", res2)
-
-	fmt.Println("Time : ", elapsed3)
-	fmt.Println("Result: ", res3)
+	fmt.Println(list)
+	fmt.Println(list.Len())
+	fmt.Println(list.Map(fn))
 }
