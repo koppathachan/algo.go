@@ -2,16 +2,30 @@ package main
 
 import (
 	"fmt"
-	"github.com/sasidakh/algo.go/util"
+	"math/rand"
+	"time"
+
+	"github.com/sasidakh/algo.go/pubsub"
 )
 
 func main() {
-	var list = util.IntArray{1, 2, 3, 4, 5, 6, 7}
-	var fn = func(a int) int {
-		return a + a
-	}
-
-	fmt.Println(list)
-	fmt.Println(list.Len())
-	fmt.Println(list.Map(fn))
+	noquit := make(chan int)
+	c := pubsub.Subscribe("q1")
+	go func() {
+		for {
+			select {
+			case x := <-c:
+				fmt.Println("got ", x)
+			}
+		}
+	}()
+	go func() {
+		for {
+			pub := rand.Intn(10)
+			time.Sleep(time.Second)
+			fmt.Println("publishing ", pub)
+			pubsub.Publish(pub, "q1")
+		}
+	}()
+	<-noquit
 }
