@@ -1,20 +1,19 @@
 package pubsub
 
-var ques map[string]*[]int = make(map[string]*[]int)
+var ques map[string]chan int = make(map[string]chan int)
 
 func Subscribe(qname string) chan int {
 	c := make(chan int)
 	q, ok := ques[qname]
 	if !ok {
-		var nq []int
-		q = &nq
+		q = make(chan int)
 		ques[qname] = q
 	}
 	go func() {
 		for {
-			if len(*q) != 0 {
-				c <- (*q)[0]
-				*q = (*q)[1:]
+			select {
+			case x := <-q:
+				c <- x
 			}
 		}
 	}()
@@ -24,9 +23,8 @@ func Subscribe(qname string) chan int {
 func Publish(k int, qname string) {
 	q, ok := ques[qname]
 	if !ok {
-		var nq []int
-		q = &nq
+		q = make(chan int)
 		ques[qname] = q
 	}
-	*q = append(*q, k)
+	q <- k
 }
